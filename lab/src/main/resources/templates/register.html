@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css"
+          integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <style>
+        input {
+            width: 300px;
+        }
+    </style>
+    <title>Registration</title>
+</head>
+<body style="width: 300px; margin: 100px auto">
+    <form class="pure-form" method="post" action="/register">
+        <legend>Register</legend>
+        <fieldset>
+            <input type="text" placeholder="First name" name="firstName" th:value="${user.getFirstName()}"/>
+            <input type="text" placeholder="Last Name" name="lastName" th:value="${user.getLastName()}"/>
+        </fieldset>
+
+        <fieldset>
+            <input type="text" placeholder="E-mail" name="email" th:value="${user.getEmail()}"/>
+            <input type="text" placeholder="Username" name="username" th:value="${user.getUsername()}"/>
+            <span class="pure-form-message" style="color: red" th:text="${usernameMessage}"></span>
+        </fieldset>
+
+        <fieldset>
+            <input type="password" placeholder="Password" name="password"/>
+            <input type="password" placeholder="Confirm password" name="matchingPassword"/>
+            <span class="pure-form-message" style="color: red" th:text="${passwordMessage}"></span>
+        </fieldset>
+
+        <fieldset>
+            <input type="submit" value="Register" class="pure-button pure-button-primary">
+            <span class="pure-form-message" style="color: lightseagreen; font-size: medium; padding-top: 10px" th:text="${successMessage}"></span>
+        </fieldset>
+    </form>
+</body>
+</html>

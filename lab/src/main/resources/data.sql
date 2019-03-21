@@ -1,0 +1,2 @@
+INSERT INTO users (username, firstname, lastname, email, password, activated) VALUES
+  ('nikolahitek', 'Nikola', 'Tasevski', 't27nikola@gmail.com', '$2a$10$QkwB8tfLia1o5/cFu1cFM.C7ojQaBaBkUxDtQB4KQxilMDiVcLGf.', true);

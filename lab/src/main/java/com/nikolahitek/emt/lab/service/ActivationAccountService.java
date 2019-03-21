@@ -7,6 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
 
 @Service
@@ -27,8 +30,20 @@ public class ActivationAccountService {
     }
 
     public User getUserToActivate(String code) {
-        logger.info("AAS Code: " + code);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Timestamp(cal.getTime().getTime()));
+        Date now = new Date(cal.getTime().getTime());
+
+        logger.info("NOW: " + now.toString());
+
         return activationCodesRepository.findByActivationCode(code)
-                .map(ActivationCode::getUser).orElse(null);
+                .map(activationCode -> {
+                    Date expiration = new Date(activationCode.getExpiryDate().getTime());
+                    logger.info("EXPIRATION: " + expiration.toString());
+                    if (!expiration.before(now)) {
+                        return activationCode.getUser();
+                    }
+                    return null;
+                }).orElse(null);
     }
 }

@@ -2,6 +2,8 @@ package com.nikolahitek.emt.lab.controller;
 
 import com.nikolahitek.emt.lab.model.entity.User;
 import com.nikolahitek.emt.lab.service.UsersService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,11 +13,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
+import java.util.Arrays;
 
 @Controller
 public class UsersController {
 
     private final UsersService usersService;
+    private final static Logger logger = LoggerFactory.getLogger(UsersController.class);
 
     public UsersController(UsersService usersService) {
         this.usersService = usersService;

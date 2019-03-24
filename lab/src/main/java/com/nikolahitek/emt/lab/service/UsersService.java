@@ -49,4 +49,37 @@ public class UsersService {
         return true;
     }
 
+    public User getUserByUsername(String username) {
+        return usersRepository.findById(username)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+    }
+
+    public User updateUser(User updatedUser) {
+        return usersRepository.findById(updatedUser.getUsername())
+                .map(user -> {
+                    user = updatedUser;
+                    return usersRepository.save(updatedUser);
+                }).orElseThrow(() -> new RuntimeException("User not found."));
+    }
+
+    public String changePassword(User user, String currentPassword, String newPassword, String confNewPassword) {
+        if (!isValidUsersPassword(user, currentPassword)) {
+            return "Current password incorrect.";
+        }
+        if (!isPasswordValid(newPassword, confNewPassword)) {
+            return "New passwords do not match.";
+        }
+        if (usersRepository.findById(user.getUsername())
+                .map(u -> {
+                    u.setPassword(passwordEncoder.encode(newPassword));
+                    return usersRepository.save(u);
+                }) != null) {
+            return "Password successfully changed.";
+        }
+        return "Error occurred. Try again.";
+    }
+
+    private boolean isValidUsersPassword(User user, String password) {
+        return passwordEncoder.matches(password, user.getPassword());
+    }
 }

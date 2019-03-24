@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
-import java.util.Arrays;
 
 @Controller
 public class UsersController {
@@ -27,9 +26,35 @@ public class UsersController {
 
     @PreAuthorize("hasAnyRole('USER')")
     @GetMapping
-    public String home(Model model, Principal principal) {
+    public String profileForm(Model model, Principal principal) {
         model.addAttribute("message", "Hello, " + principal.getName() + " :)");
-        return "homepage";
+        model.addAttribute("user", usersService.getUserByUsername(principal.getName()));
+        return "profile";
+    }
+
+    @PreAuthorize("hasAnyRole('USER')")
+    @PostMapping
+    public String profile(Model model, Principal principal,
+                          @RequestParam String firstName,
+                          @RequestParam String lastName,
+                          @RequestParam String email) {
+
+        model.addAttribute("message", "Hello, " + principal.getName() + " :)");
+
+        User user = usersService.getUserByUsername(principal.getName());
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setEmail(email);
+
+        User updatedUser = usersService.updateUser(user);
+        if (updatedUser!=null) {
+            model.addAttribute("user", updatedUser);
+            model.addAttribute("successMessage", "Info successfully updated.");
+        } else {
+            model.addAttribute("user", user);
+            model.addAttribute("successMessage", "Problem while updating. Try again.");
+        }
+        return "profile";
     }
 
     @GetMapping("/register")
@@ -98,5 +123,20 @@ public class UsersController {
             model.addAttribute("errorMessage", "Bad credentials.");
         }
         return "login";
+    }
+
+    @PreAuthorize("hasAnyRole('USER')")
+    @PostMapping("/change/password")
+    public String changePassword(Model model, Principal principal,
+                                 @RequestParam String currentPassword,
+                                 @RequestParam String newPassword,
+                                 @RequestParam String confNewPassword) {
+
+        User user = usersService.getUserByUsername(principal.getName());
+        model.addAttribute("message", "Hello, " + principal.getName() + " :)");
+        model.addAttribute("user", user);
+        model.addAttribute("changePassMessage",
+                usersService.changePassword(user, currentPassword, newPassword, confNewPassword));
+        return "profile";
     }
 }

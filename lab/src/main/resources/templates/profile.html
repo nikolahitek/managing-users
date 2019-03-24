@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css"
+          integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <style>
+        input {
+            width: 300px;
+        }
+    </style>
+    <title>Profile</title>
+</head>
+<body style="width: fit-content; margin: 50px auto">
+    <div style="display: flex; height: 100%; align-items: stretch; margin: 0 auto;">
+        <a href="/logout" style="display: flex; align-items: center;" class="pure-button pure-button-primary">Log out</a>
+        <h1 th:text="${message}" style="margin: 0 0 0 15px; width: 200px"></h1>
+    </div>
+    <div style="margin-top: 30px">
+        <form style="width: fit-content" class="pure-form" method="post" action="/profile">
+            <legend>Edit info</legend>
+            <fieldset>
+                <input type="text" placeholder="First name" name="firstName" th:value="${user.getFirstName()}"/>
+            </fieldset>
+            <fieldset>
+                <input type="text" placeholder="Last Name" name="lastName" th:value="${user.getLastName()}"/>
+            </fieldset>
+            <fieldset>
+                <input type="text" placeholder="E-mail" name="email" th:value="${user.getEmail()}"/>
+            </fieldset>
+            <fieldset>
+                <input type="submit" value="Edit" class="pure-button pure-button-primary">
+                <span class="pure-form-message" style="font-size: medium; padding-top: 10px" th:text="${successMessage}"></span>
+            </fieldset>
+        </form>
+
+        <form style="margin-top: 15px; width: fit-content" class="pure-form" method="post" action="/change/password">
+            <legend>Change password</legend>
+            <fieldset>
+                <input type="password" placeholder="Current Password" name="currentPassword"/>
+            </fieldset>
+            <fieldset>
+                <input type="password" placeholder="New password" name="newPassword"/>
+            </fieldset>
+            <fieldset>
+                <input type="password" placeholder="Confirm new password" name="confNewPassword"/>
+            </fieldset>
+            <fieldset>
+                <input type="submit" value="Change" class="pure-button pure-button-primary">
+                <span class="pure-form-message" style="font-size: medium; padding-top: 10px" th:text="${changePassMessage}"></span>
+            </fieldset>
+        </form>
+    </div>
+</body>
+</html>

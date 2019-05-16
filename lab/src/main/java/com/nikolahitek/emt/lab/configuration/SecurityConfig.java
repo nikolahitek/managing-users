@@ -1,8 +1,8 @@
 package com.nikolahitek.emt.lab.configuration;
 
-import com.nikolahitek.emt.lab.repository.UsersRepository;
+import com.nikolahitek.emt.lab.repository.AccountsRepository;
 
-import com.nikolahitek.emt.lab.service.MUserDetailsService;
+import com.nikolahitek.emt.lab.service.AccountDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,20 +17,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
-@EnableJpaRepositories(basePackageClasses = UsersRepository.class)
+@EnableJpaRepositories(basePackageClasses = AccountsRepository.class)
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final MUserDetailsService userDetailsService;
+    private final AccountDetailsService accountDetailsService;
 
     @Autowired
-    public SecurityConfig(MUserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
+    public SecurityConfig(AccountDetailsService accountDetailsService) {
+        this.accountDetailsService = accountDetailsService;
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService)
+        auth.userDetailsService(accountDetailsService)
         .passwordEncoder(passwordEncoder());
     }
 
@@ -38,12 +38,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.authorizeRequests()
-                .antMatchers("/user/**")
+                .antMatchers("/account/**")
                     .authenticated()
                 .anyRequest()
                     .permitAll()
                 .and()
                 .formLogin()
+                    .defaultSuccessUrl("/profile", false)
                     .loginPage("/login")
                     .permitAll()
                 .and()

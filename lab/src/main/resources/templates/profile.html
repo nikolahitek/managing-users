@@ -20,13 +20,13 @@
         <form style="width: fit-content" class="pure-form" method="post" action="/profile">
             <legend>Edit info</legend>
             <fieldset>
-                <input type="text" placeholder="First name" name="firstName" th:value="${user.getFirstName()}"/>
+                <input type="text" placeholder="First name" name="firstName" th:value="${account.getFirstName()}"/>
             </fieldset>
             <fieldset>
-                <input type="text" placeholder="Last Name" name="lastName" th:value="${user.getLastName()}"/>
+                <input type="text" placeholder="Last Name" name="lastName" th:value="${account.getLastName()}"/>
             </fieldset>
             <fieldset>
-                <input type="text" placeholder="E-mail" name="email" th:value="${user.getEmail()}"/>
+                <input type="text" placeholder="E-mail" name="email" th:value="${account.getEmail()}"/>
             </fieldset>
             <fieldset>
                 <input type="submit" value="Edit" class="pure-button pure-button-primary">

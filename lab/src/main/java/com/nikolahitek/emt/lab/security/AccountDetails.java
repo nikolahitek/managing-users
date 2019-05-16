@@ -1,6 +1,6 @@
-package com.nikolahitek.emt.lab.model;
+package com.nikolahitek.emt.lab.security;
 
-import com.nikolahitek.emt.lab.model.entity.User;
+import com.nikolahitek.emt.lab.model.Account;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,17 +9,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class MUserDetails extends User implements UserDetails {
+public class AccountDetails extends Account implements UserDetails {
 
-    public MUserDetails(final User user){
-        super(user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword(), user.getActivated());
+    public AccountDetails(final Account account){
+        super(account.getUsername(), account.getFirstName(), account.getLastName(), account.getEmail(), account.getPassword(), account.getActivated(), account.getRole());
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> roles = new ArrayList<>();
-        //INSTEAD OF "USER" ADD THE USERS ROLE FROM NEW ROLES RELATION
-        roles.add(new SimpleGrantedAuthority("ROLE_" + "USER"));
+        roles.add(new SimpleGrantedAuthority("ROLE_" + getRole()));
         return roles;
     }
 

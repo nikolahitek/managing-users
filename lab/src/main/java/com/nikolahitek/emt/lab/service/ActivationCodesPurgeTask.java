@@ -1,8 +1,8 @@
 package com.nikolahitek.emt.lab.service;
 
-import com.nikolahitek.emt.lab.model.entity.User;
+import com.nikolahitek.emt.lab.model.Account;
 import com.nikolahitek.emt.lab.repository.ActivationCodesRepository;
-import com.nikolahitek.emt.lab.repository.UsersRepository;
+import com.nikolahitek.emt.lab.repository.AccountsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,12 +18,12 @@ import java.util.Date;
 public class ActivationCodesPurgeTask {
 
     private final ActivationCodesRepository activationCodesRepository;
-    private final UsersRepository usersRepository;
+    private final AccountsRepository accountsRepository;
     private final static Logger logger = LoggerFactory.getLogger(ActivationCodesPurgeTask.class);
 
-    public ActivationCodesPurgeTask(ActivationCodesRepository activationCodesRepository, UsersRepository usersRepository) {
+    public ActivationCodesPurgeTask(ActivationCodesRepository activationCodesRepository, AccountsRepository accountsRepository) {
         this.activationCodesRepository = activationCodesRepository;
-        this.usersRepository = usersRepository;
+        this.accountsRepository = accountsRepository;
     }
 
     @Scheduled(cron = "0 0 1 * * *", zone = "Europe/Budapest")
@@ -34,10 +34,10 @@ public class ActivationCodesPurgeTask {
 
         activationCodesRepository.deleteByExpiryDateLessThan(now)
                 .forEach(activationCode -> {
-                    User user = activationCode.getUser();
-                    if (!user.getActivated()) {
-                        logger.info("REMOVED EXPIRED REGISTRATION FOR USER: " + activationCode.getUser().getUsername());
-                        usersRepository.deleteByUsername(activationCode.getUser().getUsername());
+                    Account account = activationCode.getAccount();
+                    if (!account.getActivated()) {
+                        logger.info("REMOVED EXPIRED REGISTRATION FOR USER: " + activationCode.getAccount().getUsername());
+                        accountsRepository.deleteByUsername(activationCode.getAccount().getUsername());
                     }
                 });
     }

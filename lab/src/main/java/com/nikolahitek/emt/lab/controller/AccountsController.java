@@ -1,9 +1,8 @@
 package com.nikolahitek.emt.lab.controller;
 
-import com.nikolahitek.emt.lab.model.entity.User;
-import com.nikolahitek.emt.lab.service.UsersService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.nikolahitek.emt.lab.consts.Role;
+import com.nikolahitek.emt.lab.model.Account;
+import com.nikolahitek.emt.lab.service.AccountsService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,26 +13,26 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 
+
 @Controller
-public class UsersController {
+public class AccountsController {
 
-    private final UsersService usersService;
-    private final static Logger logger = LoggerFactory.getLogger(UsersController.class);
+    private final AccountsService accountsService;
 
-    public UsersController(UsersService usersService) {
-        this.usersService = usersService;
+    public AccountsController(AccountsService accountsService) {
+        this.accountsService = accountsService;
     }
 
-    @PreAuthorize("hasAnyRole('USER')")
-    @GetMapping
+    @PreAuthorize("hasAnyRole('USER, EMPLOYEE, MANAGER, ADMIN')")
+    @GetMapping("/profile")
     public String profileForm(Model model, Principal principal) {
         model.addAttribute("message", "Hello, " + principal.getName() + " :)");
-        model.addAttribute("user", usersService.getUserByUsername(principal.getName()));
+        model.addAttribute("account", accountsService.getAccountByUsername(principal.getName()));
         return "profile";
     }
 
-    @PreAuthorize("hasAnyRole('USER')")
-    @PostMapping
+    @PreAuthorize("hasAnyRole('USER, EMPLOYEE, MANAGER, ADMIN')")
+    @PostMapping("/profile")
     public String profile(Model model, Principal principal,
                           @RequestParam String firstName,
                           @RequestParam String lastName,
@@ -41,17 +40,20 @@ public class UsersController {
 
         model.addAttribute("message", "Hello, " + principal.getName() + " :)");
 
-        User user = usersService.getUserByUsername(principal.getName());
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setEmail(email);
+        Account updatedAccount = null;
 
-        User updatedUser = usersService.updateUser(user);
-        if (updatedUser!=null) {
-            model.addAttribute("user", updatedUser);
+        if (firstName != null && lastName != null) {
+            updatedAccount = accountsService.updateAccountFirstAndLastName(principal.getName(), firstName, lastName);
+        }
+        if (email != null) {
+            updatedAccount = accountsService.updateAccountEmail(principal.getName(), email);
+        }
+
+        if (updatedAccount != null) {
+            model.addAttribute("account", updatedAccount);
             model.addAttribute("successMessage", "Info successfully updated.");
         } else {
-            model.addAttribute("user", user);
+            model.addAttribute("account", new Account());
             model.addAttribute("successMessage", "Problem while updating. Try again.");
         }
         return "profile";
@@ -59,7 +61,7 @@ public class UsersController {
 
     @GetMapping("/register")
     public String registerForm(Model model) {
-        model.addAttribute("user", new User());
+        model.addAttribute("account", new Account());
         return "register";
     }
 
@@ -72,22 +74,22 @@ public class UsersController {
                            @RequestParam String password,
                            @RequestParam String matchingPassword) {
 
-        User user = new User(username, firstName, lastName, email, password, false);
+        Account user = new Account(username, firstName, lastName, email, password, false, Role.USER);
 
-        if (!usersService.isUsernameValid(username)) {
+        if (!accountsService.isUsernameValid(username)) {
             model.addAttribute("usernameMessage", "Username null or taken.");
-            model.addAttribute("user", user);
+            model.addAttribute("account", user);
         }
 
-        if (!usersService.isPasswordValid(password, matchingPassword)) {
+        if (!accountsService.isPasswordValid(password, matchingPassword)) {
             model.addAttribute("passwordMessage", "Passwords null or not matching.");
-            model.addAttribute("user", user);
+            model.addAttribute("account", user);
         }
 
-        if (usersService.isUsernameValid(username) && usersService.isPasswordValid(password, matchingPassword)) {
-            usersService.registerUser(user);
-            model.addAttribute("successMessage", "User successfully registered.");
-            model.addAttribute("user", new User());
+        if (accountsService.isUsernameValid(username) && accountsService.isPasswordValid(password, matchingPassword)) {
+            accountsService.registerAccount(user);
+            model.addAttribute("successMessage", "Account successfully registered.");
+            model.addAttribute("account", new Account());
         }
         return "register";
     }
@@ -105,7 +107,7 @@ public class UsersController {
     @GetMapping("/activate/{code}")
     public String activateForCode(Model model,
                            @PathVariable String code) {
-        if (usersService.activateUserByCode(code)) {
+        if (accountsService.activateAccountByCode(code)) {
            model.addAttribute("message", "Your account has been activated.");
            model.addAttribute("link", "/login");
            model.addAttribute("button", "Login");
@@ -125,18 +127,35 @@ public class UsersController {
         return "login";
     }
 
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasAnyRole('USER, EMPLOYEE, MANAGER, ADMIN')")
     @PostMapping("/change/password")
     public String changePassword(Model model, Principal principal,
                                  @RequestParam String currentPassword,
                                  @RequestParam String newPassword,
                                  @RequestParam String confNewPassword) {
 
-        User user = usersService.getUserByUsername(principal.getName());
+        Account user = accountsService.getAccountByUsername(principal.getName());
         model.addAttribute("message", "Hello, " + principal.getName() + " :)");
-        model.addAttribute("user", user);
+        model.addAttribute("account", user);
         model.addAttribute("changePassMessage",
-                usersService.changePassword(user, currentPassword, newPassword, confNewPassword));
+                accountsService.changePassword(user, currentPassword, newPassword, confNewPassword));
         return "profile";
+    }
+
+    @GetMapping("/reset")
+    public String resetPasswordForm() {
+        return "reset-password";
+    }
+
+    @PostMapping("/reset")
+    public String resetPassword(Model model, @RequestParam String email) {
+
+        if (accountsService.resetPasswordForMail(email)) {
+           model.addAttribute("message", "New password sent to your email.");
+        } else {
+            model.addAttribute("message", "No account with that email.");
+        }
+
+        return "reset-password";
     }
 }

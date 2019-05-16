@@ -1,5 +1,6 @@
-package com.nikolahitek.emt.lab.model.entity;
+package com.nikolahitek.emt.lab.model;
 
+import com.nikolahitek.emt.lab.consts.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import javax.persistence.Table;
 @Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data public class User {
+@Data public class Account {
     @Id
     @Column(name = "username")
     private String username;
@@ -27,4 +28,11 @@ import javax.persistence.Table;
     private String password;
     @Column(name = "activated")
     private Boolean activated;
+    @Column(name = "role")
+    private Role role;
+
+    public Department getDepartment() {
+        return null;
+    }
+    public void setDepartment(Department department) { }
 }

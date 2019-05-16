@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Workers</title>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css"
+          integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+</head>
+<body style="padding: 30px">
+
+<h2>ADD WORKER:</h2>
+<form class="pure-form" method="post" action="/workers/add">
+    <input type="text" placeholder="FirstName" name="firstname" required/>
+    <input type="text" placeholder="LastName" name="lastname" required/>
+    <input type="text" placeholder="Email" name="email" required/>
+    <input type="text" placeholder="Username" name="username" required/>
+    <input type="text" placeholder="Password" name="password" required/>
+    <fieldset>
+        <input type="text" placeholder="Role" name="role" required/>
+        <input th:if="${canChangeDpt}" type="text" placeholder="Department" name="department" required/>
+        <input type="submit" value="Add" class="pure-button pure-button-primary">
+    </fieldset>
+</form>
+
+<h2>CHANGE WORKER DETAILS:</h2>
+<form class="pure-form" method="post" action="/workers">
+    <span style="font-weight: bold; font-size: 20px; color: #0074df" th:text="${selected.username}">USERNAME</span>
+    <input type="text" placeholder="Role" name="role" th:value="${selected.role}"/>
+    <input th:if="${canChangeDpt}" type="text" placeholder="Department" name="department"
+           th:value="${selected.department}"/>
+    <input type="hidden" name="username" th:value="${selected.username}" required/>
+    <input type="submit" value="Change" class="pure-button pure-button-primary">
+</form>
+
+<h2>ASSIGNED WORKERS:</h2>
+<table id="assigned">
+    <thead>
+    <tr>
+        <th th:text="Role"></th>
+        <th th:text="FirstName"></th>
+        <th th:text="LastName"></th>
+        <th th:text="Username"></th>
+        <th th:text="Email"></th>
+        <th th:text="Department"></th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="u : ${assigned}">
+        <td th:text="${u.role}"></td>
+        <td th:text="${u.firstname}"></td>
+        <td th:text="${u.lastname}"></td>
+        <td th:text="${u.username}"></td>
+        <td th:text="${u.email}"></td>
+        <td th:text="${u.department}"></td>
+        <td style="display: flex; justify-content: space-around">
+            <form class="pure-form" method="post" action="/workers/select">
+                <input type="hidden" name="username" th:value="${u.username}"/>
+                <input type="submit" value="Edit" class="pure-button pure-button-primary">
+            </form>
+            <form class="pure-form" method="post" action="/workers/delete">
+                <input type="hidden" name="username" th:value="${u.username}"/>
+                <input type="submit" value="Delete" class="pure-button pure-button-primary">
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<h2>UNASSIGNED WORKERS:</h2>
+<table id="unassigned">
+    <thead>
+    <tr>
+        <th th:text="Role"></th>
+        <th th:text="FirstName"></th>
+        <th th:text="LastName"></th>
+        <th th:text="Username"></th>
+        <th th:text="Email"></th>
+        <th th:text="Department"></th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="u : ${unassigned}">
+        <td th:text="${u.role}"></td>
+        <td th:text="${u.firstname}"></td>
+        <td th:text="${u.lastname}"></td>
+        <td th:text="${u.username}"></td>
+        <td th:text="${u.email}"></td>
+        <td th:text="${u.department}"></td>
+        <td style="display: flex; justify-content: space-around">
+            <form class="pure-form" method="post" action="/workers/select">
+                <input type="hidden" name="username" th:value="${u.username}"/>
+                <input type="submit" value="Edit" class="pure-button pure-button-primary">
+            </form>
+            <form class="pure-form" method="post" action="/workers/delete">
+                <input type="hidden" name="username" th:value="${u.username}"/>
+                <input type="submit" value="Delete" class="pure-button pure-button-primary">
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+<script type="text/javascript">
+    $('#assigned').DataTable();
+    $('#unassigned').DataTable();
+</script>
+</body>
+</html>

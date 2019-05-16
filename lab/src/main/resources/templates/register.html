@@ -15,13 +15,13 @@
     <form class="pure-form" method="post" action="/register">
         <legend>Register</legend>
         <fieldset>
-            <input type="text" placeholder="First name" name="firstName" th:value="${user.getFirstName()}"/>
-            <input type="text" placeholder="Last Name" name="lastName" th:value="${user.getLastName()}"/>
+            <input type="text" placeholder="First name" name="firstName" th:value="${account.getFirstName()}"/>
+            <input type="text" placeholder="Last Name" name="lastName" th:value="${account.getLastName()}"/>
         </fieldset>
 
         <fieldset>
-            <input type="text" placeholder="E-mail" name="email" th:value="${user.getEmail()}"/>
-            <input type="text" placeholder="Username" name="username" th:value="${user.getUsername()}"/>
+            <input type="text" placeholder="E-mail" name="email" th:value="${account.getEmail()}"/>
+            <input type="text" placeholder="Username" name="username" th:value="${account.getUsername()}"/>
             <span class="pure-form-message" style="color: red" th:text="${usernameMessage}"></span>
         </fieldset>
 

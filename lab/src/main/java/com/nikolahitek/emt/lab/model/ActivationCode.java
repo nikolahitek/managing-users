@@ -1,4 +1,4 @@
-package com.nikolahitek.emt.lab.model.entity;
+package com.nikolahitek.emt.lab.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,12 +23,12 @@ import java.util.Date;
     private String activationCode;
     @OneToOne
     @JoinColumn
-    private User user;
+    private Account account;
     private Date expiryDate;
 
-    public ActivationCode(String activationCode, User user) {
+    public ActivationCode(String activationCode, Account account) {
         this.activationCode = activationCode;
-        this.user = user;
+        this.account = account;
     }
 
     public void calculateExpiryDate() {
